@@ -6,6 +6,7 @@ import model.entity.FileMetadata;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -105,7 +106,7 @@ public class FileMetadataRepository {
                 return ;
             }
 
-            int updatedCount = session.createMutationQuery(
+            session.createMutationQuery(
                             "UPDATE FileMetadata fm SET fm.downloadCount = fm.downloadCount + 1, " +
                                     "fm.lastDownloadDate = CURRENT_TIMESTAMP WHERE fm.id = :id")
                     .setParameter("id", id)
@@ -119,6 +120,56 @@ public class FileMetadataRepository {
         } catch (Exception e) {
             session.getTransaction().rollback();
             log.error("Error incrementing download count for file ID: {}", id, e);
+            throw new RuntimeException("Database error", e);
+        }
+    }
+
+    public List<FileMetadata> findFilesNotDownloadedForDays(int days) {
+        log.debug("Finding files not downloaded for {} days", days);
+
+        Session session = sessionFactory.getCurrentSession();
+        try {
+            session.beginTransaction();
+
+            List<FileMetadata> files = session.createQuery(
+                            "FROM FileMetadata fm WHERE " +
+                                    "(fm.lastDownloadDate IS NULL AND fm.uploadDate < :dateThreshold) OR " +
+                                    "(fm.lastDownloadDate IS NOT NULL AND fm.lastDownloadDate < :dateThreshold) " +
+                                    "ORDER BY fm.uploadDate", FileMetadata.class)
+                    .setParameter("dateThreshold",
+                            LocalDateTime.now().minusDays(days))
+                    .getResultList();
+
+            session.getTransaction().commit();
+            log.debug("Found {} old files", files.size());
+
+            return files;
+        } catch (Exception e) {
+            session.getTransaction().rollback();
+            log.error("Error finding old files", e);
+            throw new RuntimeException("Database error", e);
+        }
+    }
+
+    public void delete(UUID id) {
+        log.debug("Deleting file metadata with ID: {}", id);
+
+        Session session = sessionFactory.getCurrentSession();
+        try {
+            session.beginTransaction();
+
+            FileMetadata fileMetadata = session.get(FileMetadata.class, id);
+            if (fileMetadata != null) {
+                session.remove(fileMetadata);
+                log.debug("File metadata deleted: {}", id);
+            } else {
+                log.warn("File metadata not found for deletion: {}", id);
+            }
+
+            session.getTransaction().commit();
+        } catch (Exception e) {
+            session.getTransaction().rollback();
+            log.error("Error deleting file metadata with ID: {}", id, e);
             throw new RuntimeException("Database error", e);
         }
     }

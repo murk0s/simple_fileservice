@@ -24,8 +24,8 @@ public class FileStorageService {
     private final String downloadBaseUrl;
     private final Map<String, UUID> temporaryLinks = new ConcurrentHashMap<>();
 
-    public FileStorageService(Path uploadPath, String downloadBaseUrl) {
-        this.fileMetadataRepository = new FileMetadataRepository();
+    public FileStorageService(Path uploadPath, String downloadBaseUrl, FileMetadataRepository fileMetadataRepository) {
+        this.fileMetadataRepository = fileMetadataRepository;
         this.uploadPath = uploadPath;
         this.downloadBaseUrl = downloadBaseUrl;
 
