@@ -1,0 +1,26 @@
+services:
+
+  postgresql:
+    image: bitnami/postgresql
+    container_name: db_files_service
+    ports:
+      - "5434:5432"
+    environment:
+      POSTGRESQL_USERNAME: user
+      POSTGRESQL_PASSWORD: password
+      POSTGRESQL_DATABASE: db_files_service
+    networks:
+      - app-network
+
+
+  app:
+    build: .
+    ports:
+      - "8081:8081"
+    restart: unless-stopped
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge

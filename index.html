@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Файловый сервис</title>
+    <link rel="stylesheet" href="front/css/style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Файловый сервис</h1>
+        
+        <!-- Форма загрузки -->
+        <div class="upload-section">
+            <h2>Загрузить файл</h2>
+            <form id="uploadForm" class="upload-form">
+                <input type="file" id="fileInput" class="file-input" required>
+                <button type="submit" class="upload-btn">Загрузить</button>
+            </form>
+            <div id="uploadStatus" class="status"></div>
+        </div>
+
+        <!-- Ссылка для скачивания -->
+        <div id="downloadSection" class="download-section hidden">
+            <h2>Ссылка для скачивания</h2>
+            <div class="link-container">
+                <input type="text" id="downloadLink" class="link-input" readonly>
+                <button id="copyBtn" class="copy-btn">Копировать</button>
+            </div>
+            <p class="link-info">Ссылка действительна в течение 24 часов</p>
+        </div>
+
+        <!-- Список файлов -->
+        <div class="files-section">
+            <h2>Загруженные файлы</h2>
+            <div id="filesList" class="files-list">
+                <!-- Файлы будут загружаться здесь -->
+            </div>
+        </div>
+    </div>
+
+    <script src="front/js/script.js"></script>
+</body>
+</html>
