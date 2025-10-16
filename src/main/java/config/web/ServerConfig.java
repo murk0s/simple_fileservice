@@ -17,9 +17,9 @@ public class ServerConfig {
 
     public static ServerConfig createDefault() {
         return ServerConfig.builder()
-                .port(8080)
+                .port(8081)
                 .uploadPath(Paths.get("uploads"))
-                .downloadBaseUrl("http://localhost:8080/api/v1/files/download")
+                .downloadBaseUrl("http://localhost:8081/api/v1/files/download")
                 .tempDir(System.getProperty("java.io.tmpdir"))
                 .contextPath("/")
                 .build();
